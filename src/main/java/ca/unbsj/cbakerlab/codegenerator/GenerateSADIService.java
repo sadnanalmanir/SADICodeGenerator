@@ -314,6 +314,28 @@ public class GenerateSADIService extends AbstractMojo
             throw new MojoExecutionException(message);
         }
 
+        /* create generic class file for connecting to MySQL Database */
+
+        String dbClassName = "MySqlDatabase";
+        String packagePath = StringUtils.substringBeforeLast(serviceClass, ".");
+        String completeDBClassPath = packagePath.concat(".").concat(dbClassName);
+
+        File dbConnClassFile = new File(basePath, String.format("%s/%s.java", SOURCE_DIRECTORY, completeDBClassPath.replace(".", "/")));
+        if(dbConnClassFile.exists()) {
+            try{
+                backupDBConnClassFile(dbConnClassFile);
+            } catch (IOException e) {
+                throw new MojoFailureException("failed to backup existing Database Connection Java file: " + e.getMessage());
+            }
+        }
+        try {
+            writeDBConnClassFile(dbConnClassFile, completeDBClassPath);
+        } catch (Exception e) {
+            String message = String.format("failed to write new Database connection java file for %s", serviceClass);
+            getLog().error(message, e);
+            throw new MojoExecutionException(message);
+        }
+
         serviceName = getSimpleServiceName(serviceName);
 
 		/* write new web.xml...
@@ -516,6 +538,16 @@ public class GenerateSADIService extends AbstractMojo
         }
     }
 
+    private void backupDBConnClassFile(File dbClassFile) throws IOException
+    {
+        File newFile = dbClassFile;
+        while (newFile.exists())
+            newFile = new File(getNextString(newFile.getAbsolutePath()));
+        if (!dbClassFile.renameTo(newFile)) {
+            throw new IOException(String.format("failed to backup Database Connection Java file %s to %s", dbClassFile, newFile));
+        }
+    }
+
     private String getNextString(String s)
     {
         int i = s.length();
@@ -566,6 +598,22 @@ public class GenerateSADIService extends AbstractMojo
         context.put("classes", classes);
         context.put("async", async);
         context.put("inpclsexpr", ipClassExpr);
+        Velocity.init();
+        Velocity.evaluate(context, writer, "SADI", template);
+        writer.close();
+    }
+
+    protected void writeDBConnClassFile(File dbConnClassFile, String completeDBClassPath) throws Exception
+    {
+
+		/* write the file...
+		 */
+        createPath(dbConnClassFile);
+        FileWriter writer = new FileWriter(dbConnClassFile);
+        String template = SPARQLStringUtils.readFully(GenerateSADIService.class.getResourceAsStream("/org/sadiframework/service/generator/templates/DatabaseConnectionSkeleton"));
+        VelocityContext context = new VelocityContext();
+        context.put("package", StringUtils.substringBeforeLast(completeDBClassPath, "."));
+        context.put("classname", StringUtils.substringAfterLast(completeDBClassPath, "."));
         Velocity.init();
         Velocity.evaluate(context, writer, "SADI", template);
         writer.close();

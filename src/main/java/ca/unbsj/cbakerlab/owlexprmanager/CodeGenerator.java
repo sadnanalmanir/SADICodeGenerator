@@ -127,15 +127,16 @@ public class CodeGenerator {
 
     private String createCodeForResourceValue(String objVariableName, String predicateName, String subVariableName) {
         String result = "";
-        result += "\n" + "\t\t" + "Resource " + objVariableName + " = " + subVariableName + "." + "getPropertyResourceValue" + "(" + "Vocab" + "." + predicateName + ");";
+        if(!predicateName.equals("type")) {
+            result += "\n" + "\t\t" + "Resource " + objVariableName + " = " + subVariableName + "." + "getPropertyResourceValue" + "(" + "Vocab" + "." + predicateName + ");";
 
-        result += "\n" + "\t\t" + "if" + "(" + objVariableName + " == " + "null" + ")" + "\n"
-                + "\t\t" + "{" + "\n"
-                + "\t\t" + "\tlog.fatal" + "(" + "\"" + "No " + objVariableName + " found in the input RDF for " + predicateName + "\"" + ")" + ";" + "\n"
-                + "\t\t" + "\tthrow new IllegalArgumentException" + "(" + "\"" + "Cannot extract " + objVariableName + " from the input RDF attached to " + predicateName + "\"" + ")" + ";" + "\n"
-                + "\t\t" + "}";
+            result += "\n" + "\t\t" + "if" + "(" + objVariableName + " == " + "null" + ")" + "\n"
+                    + "\t\t" + "{" + "\n"
+                    + "\t\t" + "\tlog.fatal" + "(" + "\"" + "No " + objVariableName + " found in the input RDF for " + predicateName + "\"" + ")" + ";" + "\n"
+                    + "\t\t" + "\tthrow new IllegalArgumentException" + "(" + "\"" + "Cannot extract " + objVariableName + " from the input RDF attached to " + predicateName + "\"" + ")" + ";" + "\n"
+                    + "\t\t" + "}";
 
-
+        }
         return result + "\n";
     }
 

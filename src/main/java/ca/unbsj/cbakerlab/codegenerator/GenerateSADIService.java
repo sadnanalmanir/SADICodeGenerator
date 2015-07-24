@@ -11,16 +11,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import ca.unbsj.cbakerlab.owlexprmanager.*;
+import com.tinkerpop.blueprints.Graph;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -34,8 +32,16 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxClassExpressionParser;
 import org.sadiframework.service.Config;
 import org.sadiframework.service.ServiceServlet;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.expression.ParserException;
+import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
+import org.semanticweb.owlapi.util.SimpleShortFormProvider;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -63,6 +69,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.shared.JenaException;
 import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.vocabulary.RDF;
+import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 /**
  * A goal that generates the skeleton of a SADI service.
@@ -285,6 +292,105 @@ public class GenerateSADIService extends AbstractMojo
         if (outputClass == null)
             throw new MojoFailureException(String.format("output class URI %s does not resolve to a class definition", serviceBean.getOutputClassURI()));
 
+
+        /*
+            Using the OWL API, get the input and output class expressions in Manchester syntax
+         */
+        ManchesterOWLSyntaxOWLObjectRendererImpl r = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        ManchesterOWLSyntaxClassExpressionParser parser;
+        final OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+        final OWLDataFactory df = OWLManager.getOWLDataFactory();
+        OWLOntology ontology = null;
+        String onlineOntology = "";
+        IRI ontology_IRI = null;
+        IRI documentIRI = null;
+        OWLClass clsSADIInput = null;
+        OWLClass clsSADIOutput = null;
+        Set<OWLClassExpression> eqInpClasses = null;
+        Set<OWLClassExpression> eqOutputClasses = null;
+        String inputClassExpr = "";
+        String outputClassExpr = "";
+
+        onlineOntology = inputClass.getNameSpace();
+        if(StringUtils.containsAny(onlineOntology,"#"))
+            onlineOntology = StringUtils.replace(onlineOntology, "#", "");
+
+        // if from a URI
+        documentIRI = IRI.create(onlineOntology);
+        // if from online
+
+        try {
+            ontology = manager.loadOntology(documentIRI);
+        } catch (OWLOntologyCreationException e) {
+            e.printStackTrace();
+        }
+        //OWLOntology ontology = manager.loadOntologyFromOntologyDocument(documentIRI);
+
+        parser = new ManchesterOWLSyntaxClassExpressionParser(manager.getOWLDataFactory(),new ShortFormEntityChecker(new BidirectionalShortFormProviderAdapter(manager, Collections.singleton(ontology),new SimpleShortFormProvider())));
+        clsSADIInput = df.getOWLClass(IRI.create(inputClassURI));
+        clsSADIOutput = df.getOWLClass(IRI.create(outputClassURI));
+
+        inputClassExpr = getClsExprInManchesterSyntax(ontology, clsSADIInput, r);
+        outputClassExpr = getClsExprInManchesterSyntax(ontology, clsSADIOutput, r);
+
+        //System.out.println(inputClassExpr + "\n" + outputClassExpr);
+
+        // generates input and output tree/graph from the input class descriptions
+        //ClassExpressionTreeGenerator classExpressionTreeGenerator = new ClassExpressionTreeGenerator();
+        App app = new App();
+
+        //DisjunctiveExpressionHandler disjunctiveExpressionHandler = new DisjunctiveExpressionHandler();
+        //CodeGenerator codeGenerator = new CodeGenerator();
+        //TPTPQueryGenerator tptpQueryGenerator = new TPTPQueryGenerator();
+
+
+        /*
+            IMPORTANT : Order is very important here to get returnedInputGraph and returnedOutputGraph
+         */
+        Set<Graph> setOfGeneratedInputTrees = null;
+        List<Graph> returnedInputGraph = null;
+        Set<Graph> setOfGeneratedOutputTrees = null;
+        List<Graph> returnedOutputGraph = null;
+        try {
+            setOfGeneratedInputTrees = app.handleClassExpressions(inputClassExpr, parser);
+            returnedInputGraph = app.getListOfGraphs();//classExpressionTreeGenerator.getMapOfGraphsAndCorrespondingEdges();
+            for(Graph g : returnedInputGraph){
+                System.out.println("edges : "+ g.getEdges());
+            }
+
+            setOfGeneratedOutputTrees = app.handleClassExpressions(outputClassExpr, parser);
+            returnedOutputGraph = app.getListOfGraphs();//classExpressionTreeGenerator.getMapOfGraphsAndCorrespondingEdges();
+            for(Graph g : returnedOutputGraph){
+                System.out.println("edges : "+ g.getEdges());
+            }
+
+        } catch (OWLOntologyCreationException e) {
+            e.printStackTrace();
+        } catch (ParserException e) {
+            e.printStackTrace();
+        }
+
+
+        //classExpressionTreeGenerator.setDegreeOfVertices(returnedInputGraph);
+        App.processDegreeOfVertices(returnedInputGraph);
+        App.processNodeVariableNames(returnedInputGraph);
+        //classExpressionTreeGenerator.assignNodeVariableNames(returnedInputGraph);
+        //classExpressionTreeGenerator.displayTreeVertices(returnedInputGraph);
+        //classExpressionTreeGenerator.displayTreeEdges(returnedInputGraph);
+
+        App.processDegreeOfVertices(returnedOutputGraph);
+        App.processNodeVariableNames(returnedOutputGraph);
+
+        String tptpQuery =  App.createTPTPQuery(ontology, returnedInputGraph, returnedOutputGraph);//tptpQueryGenerator.generateTPTPQuery(ontology, returnedInputGraph, returnedOutputGraph);
+        System.out.println(tptpQuery);
+
+        
+
+
+
+
+
+
         /*
         MavenProject project = (MavenProject)getPluginContext().get("project");
         File basePath = project != null ? project.getBasedir() : new File(".").getAbsoluteFile();
@@ -384,6 +490,39 @@ public class GenerateSADIService extends AbstractMojo
             } catch (IOException e) {
                 getLog().warn(String.format("failed to write new properties file %s: %s", SERVICE_PROPERTIES, e.getMessage()), e);
             }
+        }
+    }
+
+    private String getClsExprInManchesterSyntax(OWLOntology ontology, OWLClass clsSADI, ManchesterOWLSyntaxOWLObjectRendererImpl r) {
+
+        String manchesterOWLClsExpr = "";
+
+        if(isDefinedAsEquivalent(ontology, clsSADI)) {
+            for (OWLClassExpression eca : clsSADI.getEquivalentClasses(ontology)) {
+                manchesterOWLClsExpr = r.render(eca);
+            }
+        }
+        else if (isDefinedAsSubclass(ontology, clsSADI)) {
+            for (OWLClassExpression eca : clsSADI.getSuperClasses(ontology)) {
+                manchesterOWLClsExpr = r.render(eca);
+            }
+        }
+        return manchesterOWLClsExpr;
+    }
+
+    private boolean isDefinedAsEquivalent(OWLOntology ontology, OWLClass clsSADIOutput) {
+        if (clsSADIOutput.getEquivalentClasses(ontology).size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isDefinedAsSubclass(OWLOntology ontology, OWLClass clsSADIOutput) {
+        if (clsSADIOutput.getSuperClasses(ontology).size() > 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 

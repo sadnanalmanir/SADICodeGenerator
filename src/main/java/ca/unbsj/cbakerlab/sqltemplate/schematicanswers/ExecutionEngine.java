@@ -25,6 +25,8 @@ public class ExecutionEngine {
     protected final long m_exeTimeout;
     protected final ResultHandler m_resultHandler;
     //protected File tmpFilePath;
+    public static final String ONT_RDB_MAPPING_FILENAME = "tohdw_haio_semantic_map.fof.tptp";
+    public static final String ONT_TO_TPTP_FILENAME = "HAI_no_Illegal_Symbols.ontology.cnf.tptp";
 
     public ExecutionEngine(CommandLineArgsBuilder cBuilder, ResultHandler resultHandler, long exeTimeout, String binPath, String... resources) {
         ClassLoader loader = this.getClass().getClassLoader();
@@ -66,7 +68,7 @@ public class ExecutionEngine {
 
     public static ExecutionEngine VampirePrime_Schemantic_Answers = new ExecutionEngine(new CommandLineArgsBuilder() {
 
-        @Override
+
         public String[] buildCommandLine(String[] resourcePaths,
                                          String inputFilePath) {
 
@@ -83,8 +85,8 @@ public class ExecutionEngine {
         }
     }, ResultHandler.IdentityHandler, 5 * 60 * 1000, "vkernel", "extensional_predicates.xml",
             "answer_predicates.xml",
-            "tohdw_haio_semantic_map.fof.tptp",
-            "HAI_no_Illegal_Symbols.ontology.cnf.tptp",
+            ONT_RDB_MAPPING_FILENAME,
+            ONT_TO_TPTP_FILENAME,
             "predicate_views.xml",
             "PredicateViews.xsd");
 

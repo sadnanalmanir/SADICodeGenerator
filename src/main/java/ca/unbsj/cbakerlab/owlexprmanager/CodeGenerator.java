@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class CodeGenerator {
 
-    public String codeString;
+    public String codeString = "";
     public Set<OWLClass> classes;
     public Set<OWLDataProperty> dataProperties;
     public Set<OWLObjectProperty> objectProperties;
@@ -127,7 +127,7 @@ public class CodeGenerator {
 
     private String createCodeForResourceValue(String objVariableName, String predicateName, String subVariableName) {
         String result = "";
-        result += "\n" + "\t\t" + "Resource " + objVariableName + " = " + subVariableName + "." + "getPropertyResourceValue" + "(" + "Vocab" + "." + predicateName + ")";
+        result += "\n" + "\t\t" + "Resource " + objVariableName + " = " + subVariableName + "." + "getPropertyResourceValue" + "(" + "Vocab" + "." + predicateName + ");";
 
         result += "\n" + "\t\t" + "if" + "(" + objVariableName + " == " + "null" + ")" + "\n"
                 + "\t\t" + "{" + "\n"
@@ -169,10 +169,8 @@ public class CodeGenerator {
         outputCodeString += "\n\t\t" + "Model outputModel" + " = " + "output.getModel();";
         outputCodeString += "\n\t\t" + "int resourceCounter" + " = " + "0;";
         outputCodeString += "\n\t\t" + "try" + " {";
-        outputCodeString += "\n\t\t\t" + "Class.forName(\"com.mysql.jdbc.Driver\");" ;
-        outputCodeString += "\n\t\t\t" + "Connection connection = DriverManager.getConnection(dburl, \"username\", \"password\");" ;
-        outputCodeString += "\n\t\t\t" + "java.sql.Statement stmt = connection.createStatement();" ;
-        outputCodeString += "\n\t\t\t" + "ResultSet rs = stmt.executeQuery(queryByVampirePrime);" ;
+        outputCodeString += "\n\t\t\t" + "java.sql.Statement stmt = MySqlDatabase.connection.createStatement();";
+        outputCodeString += "\n\t\t\t" + "ResultSet rs = stmt.executeQuery(queryText);" ;
         outputCodeString += "\n\n\t\t\t" + "while(rs.next()) {" ;
 
 
@@ -203,7 +201,7 @@ public class CodeGenerator {
                     // if there is more than one output (multiple rows in SQL resultset)
                     if(resAttachedDataProp.contains(edge.getVertex(Direction.IN).getProperty("nodeVariableName")) ){
                         outputCodeString += "\n\t\t\t\t" + "tempResource" + " = " + "outputModel" + "." + "createResource"
-                                + "(\"" + getIRIForResource(classes, ontology, edge.getVertex(Direction.IN).getProperty("nodeVariableName").toString()) + " + resourceCounter" + "\");";
+                                + "(\"" + getIRIForResource(classes, ontology, edge.getVertex(Direction.IN).getProperty("nodeVariableName").toString())+ "\"" + " + resourceCounter" + ");";
                     }
 
                     outputCodeString += "\n\t\t\t\t" + edge.getVertex(Direction.OUT).getProperty("nodeVariableName") +
@@ -218,15 +216,16 @@ public class CodeGenerator {
 
 
         outputCodeString += "\n\t\t\t" + "} //end while" ;
-        outputCodeString += "\n\t\t\t" + "connection.close();" ;
+        //outputCodeString += "\n\t\t\t" + "connection.close();" ;
         outputCodeString += "\n\t\t" + "} //end try" ;
 
-        outputCodeString += "\n\n\t\t" + "catch(ClassNotFoundException e){" ;
-        outputCodeString += "\n\t\t" + "e.printStackTrace();" ;
-        outputCodeString += "\n\t\t" + "}" ;
+        //outputCodeString += "\n\n\t\t" + "catch(ClassNotFoundException e){" ;
+        //outputCodeString += "\n\t\t" + "e.printStackTrace();" ;
+        //outputCodeString += "\n\t\t" + "}" ;
 
-        outputCodeString += "\n\n\t\t" + "catch(SQLException e){" ;
-        outputCodeString += "\n\t\t" + "e.printStackTrace();" ;
+        outputCodeString += "\n\n\t\t" + "catch(Exception e){" ;
+        outputCodeString += "\n\t\t\t" + "log.fatal(\"Cannot execute query [\" + queryText + \"] or cannot read results:\" + e);" ;
+        outputCodeString += "\n\t\t\t" + "throw new RuntimeException(\"Cannot execute query [\" + queryText + \"] or cannot read results:\" + e,e);";
         outputCodeString += "\n\t\t" + "}" ;
 
         return outputCodeString;
@@ -246,7 +245,7 @@ public class CodeGenerator {
 
         if(type.equals("string")){
             litStmt += "\n\t\t\t\t" + tempResource + "." + "addLiteral" + "(" + "Vocab" + "." + predicate + ", " + "rs" + "." +
-                    "getString" + "(" + getColId(colId, predicate) + ");";
+                    "getString" + "(" + getColId(colId, predicate) + ")" + ");";
         }
 
         return litStmt;

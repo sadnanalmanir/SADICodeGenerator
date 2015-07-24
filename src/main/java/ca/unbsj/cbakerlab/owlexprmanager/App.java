@@ -298,10 +298,10 @@ public class App {
 
         /* generate and print input code */
 
-        String inputCodeBlock = generateInputCode(returnedInputGraph);
+        String inputCodeBlock = generateInputCode(ontology, returnedInputGraph);
         System.out.println(inputCodeBlock);
 
-        String outputCodeBlock = generateOutputCode(returnedOutputGraph);
+        String outputCodeBlock = generateOutputCode(ontology, returnedOutputGraph);
         System.out.println(outputCodeBlock);
         //classExpressionTreeGenerator.displayTreeEdges(returnedOutputGraph);
         //classExpressionTreeGenerator.displayTreeVertices(returnedOutputGraph);
@@ -337,7 +337,7 @@ public class App {
         return classExpressionTreeGenerator.getMapOfGraphsAndCorrespondingEdges();
     }
 
-    private static String generateOutputCode(List<Graph> setOfGeneratedTrees) {
+    public static String generateOutputCode(OWLOntology ontology, List<Graph> setOfGeneratedTrees) {
 
         String outputCodeBlock = "";
         // Generate the code for the output RDF graph based on the output class expression
@@ -378,7 +378,7 @@ public class App {
         return outputCodeBlock;
     }
 
-    private static String generateInputCode(List<Graph> setOfGeneratedTrees) {
+    public static String generateInputCode(OWLOntology ontology, List<Graph> setOfGeneratedTrees) {
 
         String inputCodeBlock = "";
         // Generate the code for the input RDF graph based on the input class expression
@@ -391,6 +391,7 @@ public class App {
             inputCodeBlock += codeGenerator.generateIPServiceCode(ontology, df, parser, edgesList);
 
         }//end for (Map.Entry
+
 
         return inputCodeBlock;
     }

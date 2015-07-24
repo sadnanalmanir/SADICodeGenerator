@@ -1,5 +1,10 @@
+*After generating pom.xml, replace the
+-Change the <name>, <finalName> and <contextPath> values to mysadi_demo
+-mysadi_demo is taken from serviceClass = "ca.unbsj.cbakerlab.mysadi_demo.getStudentNameByCourse";
+
 *Currently, the code is generated in
 -File basePath = new File("/home/sadnana/Dropbox/Experiments/AutoSADIServiceCode/").getAbsoluteFile();
+
 *Editing ontology
 -Go to the tab Ontology Prefix
 --change it to the proper prefix e.g. http://cbakerlab.unbsj.ca:8080/lubm/lubm-sadi-service-ontology.owl#
@@ -23,3 +28,18 @@ haiku.database.password=toh245
 #haiku.database.user=mu_user
 #haiku.database.password=mu_password
 
+*SQL Template Query
+-1)make sure that the resource directory contains
+--vkernel
+--answer_predicates.xml
+--extensional_predicates.xml
+--predicate_views.xml
+--PredicateViews.xsd
+--translated ontology either in cnf or fof in tptp syntax HAI_no_Illegal_Symbolsl.ontology.cnf.tptp
+--mapping of ontology and relaitonal data tables tohdw_haio_semantic_map.fof.tptp
+-2)make sure to have external libraries
+--CusionJE.jar
+--derby.jar
+--JSAP-2.0a.jar
+--LogicWarehouseJE.jar
+--mysql-connection-java-5.0.8-bin.jar

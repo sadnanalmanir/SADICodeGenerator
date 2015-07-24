@@ -11,6 +11,51 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Dropbox/Experiments/HAIDW2HAIO/HAIKUDemo/QueryManager/lib/mysql-connector-java-5.0.8-bin.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Dropbox/Experiments/HAIDW2HAIO/HAIKUDemo/QueryManager/lib/LogicWarehouseJE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Dropbox/Experiments/HAIDW2HAIO/HAIKUDemo/QueryManager/lib/JSAP-2.0a.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Dropbox/Experiments/HAIDW2HAIO/HAIKUDemo/QueryManager/lib/derby.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Dropbox/Experiments/HAIDW2HAIO/HAIKUDemo/QueryManager/lib/CushionJE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.5.8" level="project" />
     <orderEntry type="library" name="Maven: org.sadiframework:sadi-service:0.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.sadiframework:sadi-common:0.3.0" level="project" />
@@ -80,6 +125,7 @@
     <orderEntry type="library" name="Maven: concurrent:concurrent:1.3.4" level="project" />
     <orderEntry type="library" name="Maven: com.tinkerpop.gremlin:gremlin-java:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: com.tinkerpop:pipes:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-exec:1.3" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-mapper-asl:0.9.8" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:0.9.8" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.1" level="project" />

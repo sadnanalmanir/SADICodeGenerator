@@ -12,7 +12,7 @@ class $classname {
     /** Central DB connection used by various services. */
 
     public static Connection connection = null;
-    private static final Logger log = Logger.getLogger($classname.class);
+    private static final Logger log = Logger.getLogger(${classname}.class);
     private static String JDBCDriverName = "org.gjt.mm.mysql.Driver";
 
     static

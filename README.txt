@@ -1,3 +1,11 @@
+*TO change RDB mapping and ontology
+-Go to TPTPQueryGenerator.java and ExecutionEngine.java
+--change ONT_RDB_MAPPING_FILENAME and ONT_TO_TPTP_FILENAME
+-copy new ONT_RDB_MAPPING_FILENAME file into resources
+-copy new ONT_TO_TPTP_FILENAME into resources
+-copy new extensional_predicates.xml into resources
+-change new predicate_views.xml into resources
+
 *After generating pom.xml, replace the
 -Change the <name>, <finalName> and <contextPath> values to mysadi_demo
 -mysadi_demo is taken from serviceClass = "ca.unbsj.cbakerlab.mysadi_demo.getStudentNameByCourse";

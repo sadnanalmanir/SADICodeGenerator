@@ -26,8 +26,11 @@ public class TPTPQueryGenerator {
     String queryPrefix;
     String querySuffix;
 
-    public static final String ONT_RDB_MAPPING_FILENAME = "tohdw_haio_semantic_map.fof.tptp";
-    public static final String ONT_TO_TPTP_FILENAME = "HAI_no_Illegal_Symbols.ontology.cnf.tptp";
+    public static final String ONT_RDB_MAPPING_FILENAME = "my_university_semantic_map.fof.tptp";
+    //public static final String ONT_RDB_MAPPING_FILENAME = "tohdw_haio_semantic_map.fof.tptp";
+    public static final String ONT_TO_TPTP_FILENAME = "lubm-sadi-service-ontology.cnf.tptp";
+    //public static final String ONT_TO_TPTP_FILENAME = "HAI_no_Illegal_Symbols.ontology.cnf.tptp";
+
 
     /**
      * @param inputGraph  set of input graphs

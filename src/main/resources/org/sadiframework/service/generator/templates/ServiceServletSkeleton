@@ -78,7 +78,7 @@ public class $class extends SimpleSynchronousServiceServlet
 
 $inputcodeblock
 
-		String queryText = "$sqlquery";
+		String queryText = $sqlquery;
 
 $outputcodeblock
 

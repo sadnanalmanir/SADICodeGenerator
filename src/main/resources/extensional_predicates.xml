@@ -5,8 +5,23 @@
   <!-- Parameters for VampirePrime (vkernel shell). -->
   
   <ExtensionalPredicates>
-    <predicate name="db_Npatient" arity="37"/>
-    <predicate name="db_Nencounter" arity="90"/>
+    <predicate name="db_universities" arity="2"/>
+    <predicate name="db_departments" arity="2"/>
+    <predicate name="db_people" arity="2"/>
+    <predicate name="db_publications" arity="2"/>
+    <predicate name="db_courses" arity="4"/>
+    <predicate name="db_registered_students" arity="3"/>
+    <predicate name="db_faculty_members" arity="4"/>
+    <predicate name="db_member_degrees" arity="3"/>
+    <predicate name="db_course_registration" arity="2"/>
+    <predicate name="db_course_teaching" arity="3"/>
+    <predicate name="db_student_supervision" arity="2"/>
+    <predicate name="db_member_publications" arity="2"/>
+    <predicate name="db_phone_numbers" arity="2"/>
+    <predicate name="db_emails" arity="2"/>
+    <predicate name="db_research_groups" arity="3"/>
+    <predicate name="db_research_group_affiliation" arity="3"/>
+    <predicate name="db_department_faculty_member_total_salary_per_annum" arity="3"/>
   </ExtensionalPredicates>
 
 </Parameters>
